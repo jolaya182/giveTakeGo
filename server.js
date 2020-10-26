@@ -29,22 +29,19 @@ app.use(function(req, res, next){
 
 
 app.get('/request', (req, res)=>{
+
   sql = "SELECT * FROM books";
   db.all(sql,[], (err, rows)=>{
     if(err){
       return console.log("error->",err.message)
     }
     console.log("all the rows: ", rows);
-    rows.forEach((row)=>{
-      console.log(row.title);
-
-    })
+   
   })
   console.log("message received");
   res.send("good");
 });
 
-// app.get('request/', ()=>{});
 
 app.post('/request', (req, res)=>{
   sql = `INSERT INTO  books( available, title, timestamp) VALUES( ${false}, 'ft' ,${4} )`; 
@@ -53,15 +50,35 @@ app.post('/request', (req, res)=>{
       return console.log("error->",err.message)
     }
     console.log("a row was has been inserted with this id", this.lastID  );
-    res.send("a row was has been inserted "+ this.changes  );
+    sql = `SELECT * FROM books WHERE ${this.lastID} = id`;
+    db.all(sql,[], (err, rows)=>{
+      if(err){
+        return console.log("error->",err.message)
+      }
+      console.log("all the rows: ", rows);
+     
+      res.send(rows[0]);
+    })
+
 
   })
   
 });
 
-// app.delete('request/', ()=>{});
+app.delete('/request', (req, res)=>{
+  const t = 15;
+  sql = `DELETE  FROM books WHERE id = ${t}`;
+  db.run(sql,[], function(err, rows){
+    if(err){
+      return console.log("error->",err.message)
+    }
+    
+  })
+  console.log("message received");
+  res.send("good");
+});
 
 
 
 app.listen(port, ()=>console.log(`listening to port ${port}`));
-// db.close();
+db.close();
