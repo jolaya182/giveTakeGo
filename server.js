@@ -5,9 +5,8 @@
 
   author:  javier olaya
 
-  description: this server handles the calls to the db responding with
-  library data that is stored in the sqlite3 database
-         
+  description: this server handles the calls to the sqlite3 database
+  sending responding with library data
  */
 const express = require('express')
 const app = express();
@@ -18,67 +17,63 @@ const sqlite3 = require("sqlite3");
 const db = new sqlite3.Database('./sqlite/libraryDatabase.db');
 let sql = "";
 
-db.run('CREATE TABLE IF NOT EXISTS books (id INTEGER PRIMARY KEY AUTOINCREMENT, available ,  title , timestamp )');
+db.run('CREATE TABLE IF NOT EXISTS books (id INTEGER PRIMARY KEY AUTOINCREMENT, available TEXT,  title TEXT, timeStamp TEXT)');
 
 app.use(bodyParser.json());
-app.use(function(req, res, next){
+app.use(function (req, res, next) {
   res.header("Content-Type", "application/json; charset=utf-8");
   res.header("Access-Control-Allow-Headers", 'Content-Type');
-    next();
+  next();
 });
 
 
-app.get('/request', (req, res)=>{
-
+app.get('/request', (req, res) => {
   sql = "SELECT * FROM books";
-  db.all(sql,[], (err, rows)=>{
-    if(err){
-      return console.log("error->",err.message)
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      res.send({ error: err.message });
     }
-    console.log("all the rows: ", rows);
-   
+    res.send(rows);
   })
-  console.log("message received");
-  res.send("good");
 });
 
+app.post('/insert', (req, res) => {
+  const { title } = req.body;
+  const timeStamp = new Date().toISOString();
 
-app.post('/request', (req, res)=>{
-  sql = `INSERT INTO  books( available, title, timestamp) VALUES( ${false}, 'ft' ,${4} )`; 
-  db.run(sql,[], function(err){
-    if(err){
-      return console.log("error->",err.message)
+  sql = `INSERT INTO  books( available, title, timeStamp) VALUES( '${true}', '${title}', '${timeStamp}')`;
+  db.run(sql, [], function (err) {
+    if (err) {
+      res.send({ error: err.message });
     }
-    console.log("a row was has been inserted with this id", this.lastID  );
-    sql = `SELECT * FROM books WHERE ${this.lastID} = id`;
-    db.all(sql,[], (err, rows)=>{
-      if(err){
-        return console.log("error->",err.message)
-      }
-      console.log("all the rows: ", rows);
-     
-      res.send(rows[0]);
-    })
-
-
+    res.send({ id: this.lastID });
   })
-  
+
 });
 
-app.delete('/request', (req, res)=>{
-  const t = 15;
-  sql = `DELETE  FROM books WHERE id = ${t}`;
-  db.run(sql,[], function(err, rows){
-    if(err){
-      return console.log("error->",err.message)
+app.post('/request', (req, res) => {
+  const { title } = req.body;
+  sql = `SELECT * FROM books WHERE '${title}' = title`;
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      res.send({ error: err.message });
     }
-    
+    res.send(rows[0]);
   })
-  console.log("message received");
-  res.send("good");
+
 });
 
+app.delete('/request', (req, res) => {
+  const { id } = req.body;
+  sql = `DELETE  FROM books WHERE id = '${id}'`;
+  db.run(sql, [], function (err) {
+    if (err) {
+      res.send({ error: err.message });
+    }
+    res.send({});
+  })
 
+});
 
-app.listen(port, ()=>console.log(`listening to port ${port}`));
-db.close();
+app.listen(port, () => console.log(`listening to port ${port}`));
+// db.close();
