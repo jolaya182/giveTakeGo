@@ -31,7 +31,7 @@ app.get('/request', (req, res) => {
   sql = "SELECT * FROM books";
   db.all(sql, [], (err, rows) => {
     if (err) {
-      res.send({ error: err.message });
+      res.status(500).send({ error: err.message });
     }
     res.send(rows);
   })
@@ -44,7 +44,7 @@ app.post('/insert', (req, res) => {
   sql = `INSERT INTO  books( available, title, timeStamp) VALUES( '${true}', '${title}', '${timeStamp}')`;
   db.run(sql, [], function (err) {
     if (err) {
-      res.send({ error: err.message });
+      res.status(500).send({ error: err.message });
     }
     res.send({ id: this.lastID });
   })
@@ -56,9 +56,9 @@ app.post('/request', (req, res) => {
   sql = `SELECT * FROM books WHERE '${title}' = title`;
   db.all(sql, [], (err, rows) => {
     if (err) {
-      res.send({ error: err.message });
+      res.status(500).send({ error: err.message });
     }
-    res.send(rows[0]);
+    res.send(rows);
   })
 
 });
@@ -68,7 +68,7 @@ app.delete('/request', (req, res) => {
   sql = `DELETE  FROM books WHERE id = '${id}'`;
   db.run(sql, [], function (err) {
     if (err) {
-      res.send({ error: err.message });
+      res.status(500).send({ error: err.message });
     }
     res.send({});
   })

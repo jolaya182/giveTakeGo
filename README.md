@@ -1,22 +1,40 @@
 # giveTakeGo
-express giveTakeGo sever 
-This application requires nodejs.
+node express based API
 
-install node (https://nodejs.org/en/)
+## To Run:
 
-steps:
+```
+git clone https://github.com/jolaya182/QFrame.git
+```
 
-open a terminal or command prompt application on your computer and type: git clone https://github.com/jolaya182/QFrame.git
+In src folder:
+```
+node server.js
+```
 
-go to the src folder
+## API
 
-run npx: npx nodemon index.js
+GET `/request`
 
-or
-
-to install type : npm i
-
-run server: nodemon index.js
+_Returns all books_
 
 
-In addition you may use tools like postman in order to send requests or alternative open your browser and type in `http://localhost:3000/request` for all GET requests.(use postman for all POST requests)
+POST `/request`
+
+body: `title: <string>`
+
+_Returns book with requested title_
+
+
+POST `/insert`
+
+body: `title: <string>`
+
+_Adds a books with given title_
+
+
+DELETE `/request`
+
+body: `id: <int>`
+
+_Deletes book with provided id_
