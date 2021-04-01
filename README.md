@@ -4,7 +4,7 @@ node express based API
 ## To Run:
 
 ```
-git clone https://github.com/jolaya182/QFrame.git
+git clone https://github.com/jolaya182/giveTakeGoSQLlite.git
 ```
 
 In src folder:
